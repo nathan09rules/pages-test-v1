@@ -1,16 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TESTS</title>
-
-    <style>
-        body{
-            text-align: center;
-            font-family: sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Math Explorer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background: #333;
+      color: white;
+      display: flex;
+    }
+    nav button {
+      flex: 1;
+      padding: 1em;
+      background: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    nav button:hover {
+      background: #555;
+    }
+    section {
+      display: none;
+      padding: 2em;
+    }
+    section.active {
+      display: block;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 1em;
+    }
+  </style>
 </head>
 <body>
-    <h1>HELLO WORLD</h1>
+
+  <nav>
+    <button onclick="showTab('area')">Area</button>
+    <button onclick="showTab('pythagoras')">Pythagoras</button>
+    <button onclick="showTab('trig')">Trigonometry</button>
+  </nav>
+
+  <section id="area" class="active">
+    <h2>Area of a Rectangle</h2>
+    <label>Width: <input type="number" id="width" value="5" /></label><br />
+    <label>Height: <input type="number" id="height" value="3" /></label><br />
+    <button onclick="updateArea()">Calculate</button>
+    <p>Area = <span id="areaResult">15</span> units²</p>
+  </section>
+
+  <section id="pythagoras">
+    <h2>Pythagorean Theorem (Interactive Proof)</h2>
+    <p>Try changing a and b:</p>
+    <label>a: <input type="range" id="a" min="1" max="10" value="3" oninput="updatePythagoras()" /></label>
+    <label>b: <input type="range" id="b" min="1" max="10" value="4" oninput="updatePythagoras()" /></label>
+    <p>c² = a² + b² = <span id="cSquared">25</span> ⇒ c = <span id="cValue">5</span></p>
+    <canvas id="pythCanvas" width="300" height="300"></canvas>
+  </section>
+
+  <section id="trig">
+    <h2>Trigonometry (Right Triangle)</h2>
+    <p>Move the slider to change the angle:</p>
+    <label>θ (degrees): <input type="range" id="theta" min="0" max="90" value="45" oninput="updateTrig()" /></label>
+    <p>sin(θ) = <span id="sinVal"></span><br>
+       cos(θ) = <span id="cosVal"></span><br>
+       tan(θ) = <span id="tanVal"></span></p>
+  </section>
+
+  <script>
+    function showTab(id) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function updateArea() {
+      const w = parseFloat(document.getElementById("width").value);
+      const h = parseFloat(document.getElementById("height").value);
+      document.getElementById("areaResult").textContent = (w * h).toFixed(2);
+    }
+
+    function updatePythagoras() {
+      const a = parseFloat(document.getElementById("a").value);
+      const b = parseFloat(document.getElementById("b").value);
+      const c2 = a*a + b*b;
+      const c = Math.sqrt(c2);
+      document.getElementById("cSquared").textContent = c2.toFixed(2);
+      document.getElementById("cValue").textContent = c.toFixed(2);
+
+      // Draw triangle
+      const canvas = document.getElementById("pythCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.moveTo(50, 250);
+      ctx.lineTo(50 + a*20, 250);      // base
+      ctx.lineTo(50 + a*20, 250 - b*20); // height
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    function updateTrig() {
+      const theta = parseFloat(document.getElementById("theta").value);
+      const rad = theta * Math.PI / 180;
+      document.getElementById("sinVal").textContent = Math.sin(rad).toFixed(4);
+      document.getElementById("cosVal").textContent = Math.cos(rad).toFixed(4);
+      document.getElementById("tanVal").textContent = theta === 90 ? "∞" : Math.tan(rad).toFixed(4);
+    }
+
+    // Initial updates
+    updateArea();
+    updatePythagoras();
+    updateTrig();
+  </script>
+
 </body>
 </html>
